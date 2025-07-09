@@ -95,18 +95,11 @@ async def handle_buttons(message: types.Message):
                 reply_markup=lazer_inline_kb
             )
     elif message.text == "Назад":
-        video_path = os.path.join("media", "greeting.mp4")
-        if os.path.exists(video_path):
-            await message.answer_video(
-                open(video_path, "rb"),
-                caption="ПРИВЕТСТВИЕ НАЧАЛО",
-                reply_markup=greeting_kb
-            )
-        else:
-            await message.answer(
-                "ПРИВЕТСТВИЕ НАЧАЛО\n(Видео будет добавлено позже)",
-                reply_markup=greeting_kb
-            )
+        # Возврат к списку ниш портфолио
+        await message.answer(
+            "МОЕПОРТФОЛИОТЕКСТ",
+            reply_markup=portfolio_kb
+        )
     elif message.text == "Telegram портфолио":
         await message.answer(
             "Ссылка на Telegram портфолио: https://t.me/your_portfolio_channel"
@@ -178,17 +171,24 @@ async def handle_buttons(message: types.Message):
             "Студия красоты": ("media/beautystudio.mp4", "СТУДИЯ КРАСОТЫ текст")
         }
         video_path, desc = video_files[message.text]
+        portfolio_niche_kb = ReplyKeyboardMarkup(
+            keyboard=[
+                [KeyboardButton(text="Как со мной поработать")],
+                [KeyboardButton(text="Назад")]
+            ],
+            resize_keyboard=True
+        )
         if os.path.exists(video_path):
             with open(video_path, "rb") as video:
                 await message.answer_video(
                     video,
                     caption=desc,
-                    reply_markup=work_kb
+                    reply_markup=portfolio_niche_kb
                 )
         else:
             await message.answer(
                 f"{desc}\n(Видео будет добавлено позже)",
-                reply_markup=work_kb
+                reply_markup=portfolio_niche_kb
             )
     elif message.text == "Образование":
         edu_inline_kb = InlineKeyboardMarkup(
