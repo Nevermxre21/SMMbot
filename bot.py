@@ -112,8 +112,56 @@ async def handle_buttons(message: types.Message):
             "Ссылка на Telegram портфолио: https://t.me/your_portfolio_channel"
         )
     elif message.text == "Как со мной поработать":
+        work_menu_kb = ReplyKeyboardMarkup(
+            keyboard=[
+                [KeyboardButton(text="Контент-съемка + монтаж")],
+                [KeyboardButton(text="Полное SMM-ведение")],
+                [KeyboardButton(text="Назад")]
+            ],
+            resize_keyboard=True
+        )
         await message.answer(
-            "Связаться со мной: @your_telegram_id"
+            "Выберите формат сотрудничества:",
+            reply_markup=work_menu_kb
+        )
+    elif message.text == "Контент-съемка + монтаж":
+        content_kb = ReplyKeyboardMarkup(
+            keyboard=[
+                [KeyboardButton(text="Связаться со мной")],
+                [KeyboardButton(text="Отзывы и примеры")],
+                [KeyboardButton(text="Назад")]
+            ],
+            resize_keyboard=True
+        )
+        await message.answer(
+            "КОНТЕНТСЪЕМКА текст",
+            reply_markup=content_kb
+        )
+    elif message.text == "Связаться со мной":
+        await message.answer("Мой Telegram: @your_telegram_id")
+    elif message.text == "Отзывы и примеры":
+        await message.answer("Раздел в разработке")
+    elif message.text == "Полное SMM-ведение":
+        smm_kb = ReplyKeyboardMarkup(
+            keyboard=[
+                [KeyboardButton(text="Посмотреть примеры ведения")],
+                [KeyboardButton(text="Связаться и обсудить")],
+                [KeyboardButton(text="Вернуться в меню")]
+            ],
+            resize_keyboard=True
+        )
+        await message.answer(
+            "СММВЕДЕНИЕ текст",
+            reply_markup=smm_kb
+        )
+    elif message.text == "Посмотреть примеры ведения":
+        await message.answer("Раздел в разработке")
+    elif message.text == "Связаться и обсудить":
+        await message.answer("Мой Telegram: @your_telegram_id")
+    elif message.text == "Вернуться в меню":
+        await message.answer(
+            "Вы вернулись в главное меню.",
+            reply_markup=greeting_kb
         )
     elif message.text in [
         "Свадебное агенство",
@@ -211,8 +259,47 @@ async def handle_buttons(message: types.Message):
             f"НАСТЯ!!! Нужны блогеры человеку ({user_info}) по городу {city}"
         )
         dp['waiting_for_city'] = None
+    elif message.text == "Бесплатный продукт":
+        free_kb = ReplyKeyboardMarkup(
+            keyboard=[
+                [KeyboardButton(text="Контент на 30 дней")],
+                [KeyboardButton(text="Пак с таблицами для SMM")],
+                [KeyboardButton(text="Чек лист instagram профиля")],
+                [KeyboardButton(text="7 ошибок в сторис")],
+                [KeyboardButton(text="Назад")]
+            ],
+            resize_keyboard=True
+        )
+        await message.answer(
+            "БЕСПЛАТНПРОДУКТ текст",
+            reply_markup=free_kb
+        )
+    elif message.text == "Назад":
+        await message.answer(
+            "Вы вернулись в главное меню.",
+            reply_markup=greeting_kb
+        )
+    elif message.text == "Мой VPN":
+        vpn_inline_kb = InlineKeyboardMarkup(
+            inline_keyboard=[
+                [InlineKeyboardButton(text="Попробовать бесплатно", callback_data="vpn_try_free")]
+            ]
+        )
+        vpn_kb = ReplyKeyboardMarkup(
+            keyboard=[[KeyboardButton(text="Назад")]],
+            resize_keyboard=True
+        )
+        await message.answer(
+            "ОПИСАНИЕВПН текст",
+            reply_markup=vpn_inline_kb
+        )
+    elif message.text == "Вернуться в меню":
+        await message.answer(
+            "Вы вернулись в главное меню.",
+            reply_markup=greeting_kb
+        )
     else:
-        await message.answer(f"Вы написали: {message.text}")
+        await message.answer(f"Неизвестная команда: {message.text}")
 
 @dp.callback_query()
 async def handle_lazer_studio_callback(callback: types.CallbackQuery):
@@ -239,6 +326,35 @@ async def handle_lazer_studio_callback(callback: types.CallbackQuery):
                 f"{desc}\n(Видео будет добавлено позже)",
                 reply_markup=work_kb
             )
+    if callback.data == "vpn_try_free":
+        vpn_try_kb = InlineKeyboardMarkup(
+            inline_keyboard=[
+                [InlineKeyboardButton(text="Инструкция по установке", callback_data="vpn_instruction")],
+                [InlineKeyboardButton(text="Задать вопрос", callback_data="vpn_question")]
+            ]
+        )
+        menu_kb = ReplyKeyboardMarkup(
+            keyboard=[[KeyboardButton(text="Вернуться в меню")]],
+            resize_keyboard=True
+        )
+        await callback.message.answer(
+            "Выберите действие:",
+            reply_markup=vpn_try_kb
+        )
+        await callback.message.answer(
+            "Для возврата используйте кнопку ниже.",
+            reply_markup=menu_kb
+        )
+        await callback.answer()
+        return
+    if callback.data == "vpn_instruction":
+        await callback.message.answer("Инструкция по установке: ...")
+        await callback.answer()
+        return
+    if callback.data == "vpn_question":
+        await callback.message.answer("Задайте свой вопрос в Telegram: @your_telegram_id")
+        await callback.answer()
+        return
     await callback.answer()
 
 async def main():
